@@ -1,0 +1,44 @@
+# .github/workflows/lcd-test.yml
+name: LCD Driver Test
+
+on:
+  push:
+    paths: ['drivers/lcd/**', 'tests/lcd/**']
+  pull_request:
+    paths: ['drivers/lcd/**', 'tests/lcd/**']
+
+jobs:
+  test-lcd:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y linux-headers-generic build-essential cppcheck
+    
+    - name: Build LCD driver
+      run: |
+        cd drivers/lcd
+        make
+        
+    - name: Run C tests
+      run: |
+        cd tests/lcd
+        make test
+        ./test_lcd
+    
+    - name: MISRA C check
+      run: |
+        cppcheck --addon=misra drivers/lcd/*.c 2>&1 | tee misra-report.txt
+        echo "MISRA check completed"
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          drivers/lcd/*.ko
+          misra-report.txt
