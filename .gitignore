@@ -361,3 +361,5 @@ reports/
 !README.md
 !LICENSE
 !CHANGELOG.md
+test_lcd
+*.o

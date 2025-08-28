@@ -27,6 +27,7 @@ jobs:
     - name: Run C tests
       run: |
         cd tests/lcd
+        make clean
         make test
         ./test_lcd
     
