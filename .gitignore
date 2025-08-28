@@ -1,0 +1,365 @@
+# ==========================================
+# Automatic Door System - .gitignore
+# ==========================================
+
+# ===================
+# 커널 모듈 빌드 산출물
+# ===================
+*.ko
+*.o
+*.mod.c
+*.mod
+*.cmd
+*.symvers
+Module.symvers
+modules.order
+.tmp_versions/
+*.markers
+
+# ===================
+# C/C++ 컴파일 산출물
+# ===================
+*.a
+*.so
+*.so.*
+*.dylib
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# 디버그 파일
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# ===================
+# 빌드 디렉토리
+# ===================
+build/
+debug/
+release/
+Debug/
+Release/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile.bak
+
+# ===================
+# Python 관련
+# ===================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 배포
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# 단위 테스트
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# 가상환경
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ===================
+# 데이터베이스
+# ===================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+user_auth.db
+access_logs.db
+*.backup
+
+# ===================
+# 로그 및 임시 파일
+# ===================
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# 시스템 로그
+syslog
+kern.log
+dmesg.out
+
+# 하드웨어 테스트 로그
+hardware_test.log
+sensor_data.log
+motor_status.log
+lcd_debug.log
+
+# ===================
+# IDE 및 에디터
+# ===================
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+tags
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===================
+# 운영체제 관련
+# ===================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===================
+# 보안 및 설정 파일
+# ===================
+# 개인 설정
+config/personal/
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# SSH 키
+*.pem
+*.key
+*.crt
+id_rsa*
+id_ed25519*
+
+# 인증 정보
+secrets/
+credentials/
+*.passwd
+auth_tokens.txt
+
+# ===================
+# 테스트 결과
+# ===================
+test-results/
+test-reports/
+*.xml
+junit.xml
+test_results.xml
+integration_results.xml
+simulation_results.xml
+
+# MISRA C 리포트
+misra-report.txt
+misra-report.xml
+misra-compliance.md
+misra-compliance.html
+
+# Coverage 리포트
+coverage_html/
+*.gcov
+*.gcno
+*.gcda
+
+# ===================
+# 웹 인터페이스 관련
+# ===================
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 정적 파일
+static/build/
+media/uploads/
+.sass-cache/
+
+# ===================
+# 문서 빌드
+# ===================
+docs/_build/
+docs/build/
+site/
+.sphinx-build/
+
+# ===================
+# 배포 및 패키징
+# ===================
+*.tar
+*.tar.gz
+*.rar
+*.zip
+*.7z
+*.deb
+*.rpm
+
+# Docker
+Dockerfile.local
+.dockerignore.local
+
+# ===================
+# 프로젝트별 특수 파일
+# ===================
+# 하드웨어 설정 백업
+hardware_config.backup
+device_mapping.local
+
+# 개발용 스크립트
+scripts/personal/
+scripts/local/
+
+# 임시 실험 코드
+experiments/
+playground/
+scratch/
+
+# 성능 프로파일링
+*.prof
+perf.data*
+callgrind.out.*
+
+# ===================
+# CI/CD 관련
+# ===================
+# GitHub Actions 로컬 실행
+.github/workflows/local/
+act_runner/
+
+# 아티팩트
+artifacts/
+reports/
+
+# ===================
+# 추가 제외할 파일들
+# ===================
+# 대용량 바이너리 파일
+*.bin
+*.img
+*.iso
+
+# 백업 파일
+*.orig
+*.rej
+
+# 패치 파일
+*.patch
+*.diff
+
+# ===================
+# 하지만 포함해야 하는 파일들
+# ===================
+# 중요한 설정 파일들은 포함
+!config/default.json
+!config/production.template.json
+!.github/workflows/*.yml
+!.github/scripts/
+!docs/
+!README.md
+!LICENSE
+!CHANGELOG.md
+test_lcd
+*.o
