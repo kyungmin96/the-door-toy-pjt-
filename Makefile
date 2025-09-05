@@ -13,10 +13,10 @@ BLUE = \033[0;34m
 NC = \033[0m # No Color
 
 # 드라이버 경로 (현재 + 미래 확장)
-DRIVER_DIRS = drivers/lcd
+DRIVER_DIRS = drivers/lcd drivers/ultrasonic
 
 # 테스트 경로
-TEST_DIRS = tests/lcd
+TEST_DIRS = tests/lcd tests/ultrasonic
 
 # 기본 타겟
 .PHONY: all clean test install uninstall help status
@@ -185,6 +185,8 @@ help:
 	@echo "$(YELLOW)Individual Driver Build:$(NC)"
 	@echo "  make -C drivers/lcd     - Build LCD driver only"
 	@echo "  make -C tests/lcd       - Run LCD tests only"
+	@echo "  make -C ultrasonic  - Build ultrasonic driver only"
+	@echo "  make -C ultrasonic-test - Run ultrasonic tests only"
 
 # 개별 드라이버 빌드 (편의 명령어)
 lcd:
@@ -192,3 +194,9 @@ lcd:
 
 lcd-test:
 	@$(MAKE) -C tests/lcd run-tests
+
+ultrasonic:
+	@$(MAKE) -C drivers/ultrasonic
+
+ultrasonic-test:
+	@$(MAKE) -C tests/ultrasonic run-tests
