@@ -12,7 +12,6 @@
 #include <linux/slab.h>    // kzalloc, kfree
 #include <linux/ioctl.h>   // _IO, _IOW 매크로용
 
-
 // 1602 LCD 전용 설정
 #define DEVICE_NAME "lcd1602"
 #define CLASS_NAME  "lcd"
@@ -20,12 +19,12 @@
 #define SLAVE_DEVICE_NAME   "LCD1602"
 #define LCD_SLAVE_ADDR      0x27
 
-// 1602 LCD 크기 정의 (수정된 부분)
+// 1602 LCD 크기 정의
 #define LCD_WIDTH    16
 #define LCD_HEIGHT   2
 #define LCD_MAX_CHARS (LCD_WIDTH * LCD_HEIGHT)
 
-// 1602 LCD 라인 주소 (수정된 부분)
+// 1602 LCD 라인 주소
 #define LCD_LINE1_ADDR  0x00
 #define LCD_LINE2_ADDR  0x40
 
@@ -46,7 +45,7 @@
 #define READ_WRITE    0x02
 #define REGISTER_SELECT 0x01
 
-// 드라이버 상태 구조체 (추가된 부분)
+// 드라이버 상태 구조체
 struct lcd1602_data {
     struct i2c_client *client;
     struct mutex lock;
@@ -74,6 +73,13 @@ static const struct i2c_device_id lcd_i2c_id[] = {
     { }
 };
 MODULE_DEVICE_TABLE(i2c, lcd_i2c_id);
+
+// 디바이스 권한 자동 설정 함수
+static int lcd_dev_uevent(const struct device *dev, struct kobj_uevent_env *env)
+{
+    add_uevent_var(env, "DEVMODE=%#o", 0666);
+    return 0;
+}
 
 // 4비트 모드로 데이터 전송
 static int lcd_write_nibble(u8 data, u8 control)
@@ -131,7 +137,7 @@ static int lcd_write_data(u8 data)
     ret = lcd_write_nibble(data << 4, REGISTER_SELECT);
     if (ret) return ret;
     
-    // 커서 위치 업데이트 (수정된 부분)
+    // 커서 위치 업데이트 
     lcd_data->cursor_col++;
     if (lcd_data->cursor_col >= LCD_WIDTH) {
         lcd_data->cursor_col = 0;
@@ -141,7 +147,7 @@ static int lcd_write_data(u8 data)
     return 0;
 }
 
-// 커서 위치 설정 (추가된 함수)
+// 커서 위치 설정 
 static int lcd_set_cursor(int col, int row)
 {
     u8 addr;
@@ -160,7 +166,7 @@ static int lcd_set_cursor(int col, int row)
     return lcd_write_command(LCD_SET_DDRAM_ADDR | addr);
 }
 
-// 1602 LCD 초기화 (수정된 부분)
+// 1602 LCD 초기화 
 static int lcd_init(void)
 {
     int ret;
@@ -210,7 +216,7 @@ static int lcd_init(void)
     return 0;
 }
 
-// 파일 연산 - write (개선된 버전)
+// 파일 연산 - write 
 static ssize_t lcd_write(struct file *file, const char __user *buf,
                         size_t len, loff_t *ppos)
 {
@@ -272,7 +278,7 @@ static ssize_t lcd_write(struct file *file, const char __user *buf,
     return written;
 }
 
-// IOCTL 명령어 정의 (추가된 부분)
+// IOCTL 명령어 정의 
 #define LCD_IOC_MAGIC  'L'
 #define LCD_IOC_CLEAR       _IO(LCD_IOC_MAGIC, 1)
 #define LCD_IOC_HOME        _IO(LCD_IOC_MAGIC, 2)
@@ -280,7 +286,7 @@ static ssize_t lcd_write(struct file *file, const char __user *buf,
 #define LCD_IOC_BACKLIGHT   _IOW(LCD_IOC_MAGIC, 4, int)
 #define LCD_IOC_DISPLAY     _IOW(LCD_IOC_MAGIC, 5, int)
 
-// IOCTL 함수 (추가된 함수)
+// IOCTL 함수 
 static long lcd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
     int ret = 0;
@@ -321,14 +327,14 @@ static long lcd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
     return ret;
 }
 
-// 파일 연산 구조체 (누락된 부분)
+// 파일 연산 구조체 
 static struct file_operations fops = {
     .owner = THIS_MODULE,
     .write = lcd_write,
     .unlocked_ioctl = lcd_ioctl,
 };
 
-// I2C 드라이버 probe 함수 (누락된 부분)
+// I2C 드라이버 probe 함수 
 static int lcd_i2c_probe(struct i2c_client *client)
 {
     int ret;
@@ -344,14 +350,14 @@ static int lcd_i2c_probe(struct i2c_client *client)
     return 0;
 }
 
-// I2C 드라이버 remove 함수 (누락된 부분)
+// I2C 드라이버 remove 함수 
 static void lcd_i2c_remove(struct i2c_client *client)
 {
     lcd_write_command(LCD_CLEAR_DISPLAY);
     pr_info("LCD I2C Driver Removed\n");
 }
 
-// I2C 드라이버 구조체 (누락된 부분)
+// I2C 드라이버 구조체 
 static struct i2c_driver lcd_i2c_driver = {
     .driver = {
         .name   = SLAVE_DEVICE_NAME,
@@ -362,7 +368,7 @@ static struct i2c_driver lcd_i2c_driver = {
     .id_table = lcd_i2c_id,
 };
 
-// 모듈 초기화 함수 (누락된 부분)
+// 모듈 초기화 함수 
 static int __init lcd_driver_init(void)
 {
     int ret;
@@ -413,6 +419,7 @@ static int __init lcd_driver_init(void)
         return ret;
     }
     
+    //  클래스 생성 시 권한 설정 콜백 등록 
     cl = class_create(CLASS_NAME);
     if (IS_ERR(cl)) {
         unregister_chrdev_region(first, 1);
@@ -421,6 +428,9 @@ static int __init lcd_driver_init(void)
         kfree(lcd_data);
         return PTR_ERR(cl);
     }
+    
+    //  권한 자동 설정을 위한 uevent 콜백 등록 
+    cl->dev_uevent = lcd_dev_uevent;
     
     if (!device_create(cl, NULL, first, NULL, DEVICE_NAME)) {
         class_destroy(cl);
@@ -443,11 +453,11 @@ static int __init lcd_driver_init(void)
         return -1;
     }
     
-    pr_info("I2C LCD1602 Driver Loaded Successfully\n");
+    pr_info("I2C LCD1602 Driver Loaded Successfully (auto-permission: 0666)\n");
     return 0;
 }
 
-// 모듈 해제 함수 (누락된 부분)
+// 모듈 해제 함수 
 static void __exit lcd_driver_exit(void)
 {
     i2c_unregister_device(lcd_data->client);
@@ -466,12 +476,12 @@ static void __exit lcd_driver_exit(void)
     pr_info("I2C LCD1602 Driver Unloaded\n");
 }
 
-// 모듈 등록 매크로 (누락된 부분)
+// 모듈 등록 매크로 
 module_init(lcd_driver_init);
 module_exit(lcd_driver_exit);
 
-// 모듈 정보 매크로 (누락된 부분 - 필수!)
+// 모듈 정보 매크로 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Veda");
-MODULE_DESCRIPTION("I2C LCD1602 Character Device Driver for Raspberry Pi");
+MODULE_DESCRIPTION("I2C LCD1602 Character Device Driver for Raspberry Pi - Auto Permission");
 MODULE_VERSION("1.0");

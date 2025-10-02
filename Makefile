@@ -87,14 +87,12 @@ test-drivers:
 # 드라이버 설치 (실제 하드웨어에서)
 install: all
 	@echo "$(YELLOW)📦 Installing drivers...$(NC)"
-	@if [ "$$EUID" -ne 0 ]; then \
-		echo "$(RED)❌ Please run as root (sudo make install)$(NC)"; \
-		exit 1; \
-	fi
 	@for dir in $(DRIVER_DIRS); do \
 		if [ -f $$dir/*.ko ]; then \
+			module_name=$$(basename $$dir/*.ko .ko); \
 			echo "Installing $$dir driver..."; \
-			insmod $$dir/*.ko || true; \
+			sudo rmmod $$module_name 2>/dev/null || true; \
+			sudo insmod $$dir/*.ko || true; \
 		fi; \
 	done
 	@echo "$(GREEN)✅ Installation completed$(NC)"

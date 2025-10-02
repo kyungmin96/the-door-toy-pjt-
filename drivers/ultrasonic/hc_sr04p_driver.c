@@ -50,6 +50,13 @@ struct sensor_data {
 
 static struct sensor_data *sensor_dev;
 
+// *** 추가: 디바이스 권한 자동 설정 함수 ***
+static int hc_sr04p_dev_uevent(const struct device *dev, struct kobj_uevent_env *env)
+{
+    add_uevent_var(env, "DEVMODE=%#o", 0666);
+    return 0;
+}
+
 // 인터럽트 핸들러 (ECHO 핀의 rising/falling edge)
 static irqreturn_t echo_irq_handler(int irq, void *dev_id) {
     struct sensor_data *data = (struct sensor_data *)dev_id;
@@ -139,7 +146,7 @@ static ssize_t device_read(struct file *filp, char __user *buffer, size_t len, l
     
     mutex_unlock(&sensor_dev->lock);
     
-    // 측정 완료 대기 (최대 100ms)
+    // 측정 완료 대기 (최대 2초)
     ret = wait_event_interruptible_timeout(
         sensor_dev->wait_queue,
         atomic_read(&sensor_dev->measurement_ready) != 0,
@@ -175,7 +182,7 @@ static const struct file_operations fops = {
     .read = device_read,
 };
 
-// 모듈 초기화
+// 모듈 초기화 (수정된 부분 - 권한 설정 추가)
 static int __init hc_sr04p_init(void) {
     int ret;
     
@@ -230,13 +237,16 @@ static int __init hc_sr04p_init(void) {
         goto err_unreg_chrdev;
     }
     
-    // ✅ 수정: class_create API 변경 (THIS_MODULE 제거)
+    // *** 수정: 클래스 생성 및 권한 설정 콜백 등록 ***
     sensor_dev->dev_class = class_create(CLASS_NAME);
     if (IS_ERR(sensor_dev->dev_class)) {
         pr_err("[HC-SR04P]: Cannot create class\n");
         ret = PTR_ERR(sensor_dev->dev_class);
         goto err_del_cdev;
     }
+    
+    // *** 추가: 권한 자동 설정을 위한 uevent 콜백 등록 ***
+    sensor_dev->dev_class->dev_uevent = hc_sr04p_dev_uevent;
     
     // 디바이스 파일 생성
     sensor_dev->dev_device = device_create(
@@ -253,7 +263,7 @@ static int __init hc_sr04p_init(void) {
         goto err_destroy_class;
     }
     
-    pr_info("[HC-SR04P]: Device registered successfully. Device: /dev/%s\n", DEVICE_NAME);
+    pr_info("[HC-SR04P]: Device registered successfully. Device: /dev/%s (auto-permission: 0666)\n", DEVICE_NAME);
     return 0;
     
     // 에러 처리
@@ -292,6 +302,6 @@ module_init(hc_sr04p_init);
 module_exit(hc_sr04p_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Your Name");
-MODULE_DESCRIPTION("HC-SR04P Ultrasonic Distance Sensor Driver for Raspberry Pi");
+MODULE_AUTHOR("Veda");
+MODULE_DESCRIPTION("HC-SR04P Ultrasonic Distance Sensor Driver for Raspberry Pi - Auto Permission");
 MODULE_VERSION("1.0");
