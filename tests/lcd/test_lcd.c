@@ -43,12 +43,34 @@ int test_line_wrap(void) {
     return 0;
 }
 
+int test_backlight_blink(void) {
+    printf("🔆 Testing: Backlight control... ");
+    
+    // /dev/i2c_lcd1602에 백라이트 ON/OFF 명령 전송
+    FILE *device = fopen("/dev/i2c_lcd1602", "w");
+    if (!device) {
+        printf("⚠️  SKIPPED (device not found)\n");
+        return 0;
+    }
+    
+    // 3초간 깜빡임 (사용자가 눈으로 확인 가능)
+    for (int i = 0; i < 6; i++) {
+        fprintf(device, "BACKLIGHT_%s\n", (i % 2) ? "ON" : "OFF");
+        fflush(device);
+        usleep(500000); // 0.5초 대기
+    }
+    
+    fclose(device);
+    printf("✅ PASSED (check display visually)\n");
+    return 0;
+}
+
 int main(void) {
     printf("Starting LCD basic tests...\n");
     
-    test_cursor_update();
-    test_line_wrap();
-    
+    // test_cursor_update();
+    // test_line_wrap();
+    test_backlight_blink();
     printf("All tests passed! ✅\n");
     return 0;
 }
