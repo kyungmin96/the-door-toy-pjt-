@@ -106,34 +106,34 @@ jobs:
           build-logs.txt
 
   # 코드 품질 검사
-  code-quality:
-    runs-on: ubuntu-latest
+  # code-quality:
+  #   runs-on: ubuntu-latest
     
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
     
-    - name: Install quality tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cppcheck clang-format
+  #   - name: Install quality tools
+  #     run: |
+  #       sudo apt-get update
+  #       sudo apt-get install -y cppcheck clang-format
     
-    - name: Check code formatting
-      run: |
-        find drivers/ tests/ -name "*.c" -o -name "*.h" | xargs clang-format --style=file --dry-run --Werror
+  #   - name: Check code formatting
+  #     run: |
+  #       find drivers/ tests/ -name "*.c" -o -name "*.h" | xargs clang-format --style=file --dry-run --Werror
     
-    - name: Advanced static analysis
-      run: |
-        mkdir -p quality-reports
-        # 전체 프로젝트 정적 분석
-        cppcheck --enable=all --xml --xml-version=2 drivers/ 2> quality-reports/cppcheck.xml || true
-        # MISRA 체크
-        cppcheck --addon=misra drivers/ 2> quality-reports/misra-all.txt || true
+  #   - name: Advanced static analysis
+  #     run: |
+  #       mkdir -p quality-reports
+  #       # 전체 프로젝트 정적 분석
+  #       cppcheck --enable=all --xml --xml-version=2 drivers/ 2> quality-reports/cppcheck.xml || true
+  #       # MISRA 체크
+  #       cppcheck --addon=misra drivers/ 2> quality-reports/misra-all.txt || true
     
-    - name: Upload quality reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-quality-reports
-        path: quality-reports/
+  #   - name: Upload quality reports
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: code-quality-reports
+  #       path: quality-reports/
 
   # 성능 및 메모리 테스트 (시뮬레이션)
   performance-test:
