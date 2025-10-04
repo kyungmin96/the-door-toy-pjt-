@@ -1,13 +1,4 @@
----
-Language: Cpp
-BasedOnStyle: Linux
+BasedOnStyle: LLVM
 IndentWidth: 8
-UseTab: ForIndentation
-BreakBeforeBraces: Linux
-AlignTrailingComments: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-SpaceAfterCStyleCast: false
-SpaceBeforeParens: ControlStatements
-MaxEmptyLinesToKeep: 2
-KeepEmptyLinesAtTheStartOfBlocks: false
+UseTab: Always
+ColumnLimit: 80
