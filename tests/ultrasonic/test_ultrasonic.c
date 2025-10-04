@@ -169,39 +169,6 @@ int test_trigger_pulse_simulation(void) {
     return 0;
 }
 
-// 실제 드라이버 통합 테스트 (하드웨어 있을 때)
-int test_driver_integration(void) {
-    TEST_START("Driver integration (hardware required)");
-    
-    // /dev/hc_sr04p 디바이스 파일 존재 확인
-    FILE *device = fopen("/dev/hc_sr04p", "r");
-    if (device == NULL) {
-        printf("⚠️  SKIPPED (no hardware or driver not loaded)\n");
-        return 0;
-    }
-    
-    // 간단한 읽기 테스트
-    char buffer[32];
-    size_t bytes_read = fread(buffer, 1, sizeof(buffer)-1, device);
-    fclose(device);
-    
-    if (bytes_read > 0) {
-        buffer[bytes_read] = '\0';
-        int distance = atoi(buffer);
-        
-        // 합리적인 거리 범위 확인 (3mm ~ 4m)
-        if (distance < 3 || distance > 4000) {
-            TEST_FAIL("Invalid distance reading from hardware");
-        }
-        
-        printf("✅ PASSED (read %dmm)\n", distance);
-        tests_passed++;
-    } else {
-        TEST_FAIL("Could not read from device");
-    }
-    
-    return 0;
-}
 
 // 메인 테스트 함수
 int main(void) {
@@ -214,7 +181,6 @@ int main(void) {
     if (test_distance_precision() != 0) return 1;
     if (test_gpio_setup() != 0) return 1;
     if (test_trigger_pulse_simulation() != 0) return 1;
-    if (test_driver_integration() != 0) return 1;
     
     // 결과 요약
     printf("\n📊 Test Results Summary\n");

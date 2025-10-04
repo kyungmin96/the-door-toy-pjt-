@@ -1,0 +1,15 @@
+cat > .clang-format << 'EOF'
+---
+Language: Cpp
+BasedOnStyle: Linux
+IndentWidth: 8
+UseTab: ForIndentation
+BreakBeforeBraces: Linux
+AlignTrailingComments: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+MaxEmptyLinesToKeep: 2
+ColumnLimit: 80
+EOF
